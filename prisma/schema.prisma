@@ -48,7 +48,7 @@ model Activity {
   endTime     String?
   category    String   @default("sightseeing")
   cost        Float    @default(0)
-  currency    String   @default("JPY")
+  currency    String   @default("EUR")
   photoUrl    String?
   rating      Float?
   dayId       String
@@ -65,7 +65,7 @@ model BudgetItem {
   name      String
   category  String
   amount    Float
-  currency  String   @default("JPY")
+  currency  String   @default("EUR")
   paid      Boolean  @default(false)
   tripId    String
   trip      Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)

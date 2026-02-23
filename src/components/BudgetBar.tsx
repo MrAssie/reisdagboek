@@ -10,8 +10,9 @@ export default function BudgetBar({ spent, total }: BudgetBarProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
-        <span className="text-japan-gray">
-          ¥{spent.toLocaleString()} / ¥{total.toLocaleString()}
+        <span className="text-travel-gray">
+          {spent.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })} /{" "}
+          {total.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })}
         </span>
         <span
           className={`font-medium ${
@@ -28,14 +29,14 @@ export default function BudgetBar({ spent, total }: BudgetBarProps) {
               ? "bg-red-500"
               : percentage > 80
                 ? "bg-amber-400"
-                : "bg-japan-red"
+                : "bg-travel-primary"
           }`}
           style={{ width: `${percentage}%` }}
         />
       </div>
       {isOverBudget && (
         <p className="text-xs text-red-500 font-medium">
-          ¥{(spent - total).toLocaleString()} over budget!
+          {(spent - total).toLocaleString("nl-NL", { style: "currency", currency: "EUR" })} over budget!
         </p>
       )}
     </div>

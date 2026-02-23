@@ -19,14 +19,14 @@ interface MapViewProps {
 }
 
 const categoryColors: Record<string, string> = {
-  sightseeing: "#DC2626",
+  sightseeing: "#0891B2",
   food: "#EA580C",
   transport: "#2563EB",
   shopping: "#DB2777",
   accommodation: "#7C3AED",
   culture: "#4F46E5",
   nature: "#16A34A",
-  selected: "#DC2626",
+  selected: "#0891B2",
   place: "#6B7280",
 };
 
@@ -34,8 +34,8 @@ const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function MapView({
   markers = [],
-  center = { lat: 35.6762, lng: 139.6503 },
-  zoom = 6,
+  center = { lat: 52.3676, lng: 4.9041 },
+  zoom = 4,
   onMarkerClick,
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -64,7 +64,7 @@ export default function MapView({
         const map = new google.Map(mapRef.current, {
           center,
           zoom,
-          mapId: "japan-reis-tracker",
+          mapId: "reisdagboek",
           disableDefaultUI: false,
           zoomControl: true,
           mapTypeControl: false,
@@ -102,7 +102,7 @@ export default function MapView({
       pinElement.style.width = "28px";
       pinElement.style.height = "28px";
       pinElement.style.borderRadius = "50%";
-      pinElement.style.backgroundColor = categoryColors[marker.category] || "#DC2626";
+      pinElement.style.backgroundColor = categoryColors[marker.category] || "#0891B2";
       pinElement.style.border = "3px solid white";
       pinElement.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)";
       pinElement.style.cursor = "pointer";
@@ -144,7 +144,7 @@ export default function MapView({
       <div className="h-full flex items-center justify-center bg-gray-50">
         <div className="text-center p-8 max-w-md">
           <p className="text-4xl mb-4">🗺️</p>
-          <p className="text-japan-gray text-sm">{error}</p>
+          <p className="text-travel-gray text-sm">{error}</p>
         </div>
       </div>
     );

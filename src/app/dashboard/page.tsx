@@ -97,7 +97,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-japan-red border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-travel-primary border-t-transparent" />
       </div>
     );
   }
@@ -106,9 +106,9 @@ export default function DashboardPage() {
     <div className="p-8 max-w-6xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-japan-dark">Dashboard</h1>
-          <p className="text-japan-gray mt-1">
-            Overzicht van je Japan reizen
+          <h1 className="text-3xl font-bold text-travel-dark">Dashboard</h1>
+          <p className="text-travel-gray mt-1">
+            Overzicht van al je reizen en budget
           </p>
         </div>
         <button onClick={() => setShowNewTrip(true)} className="btn-primary">
@@ -119,25 +119,25 @@ export default function DashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="card">
-          <p className="text-sm text-japan-gray">Reizen</p>
-          <p className="text-2xl font-bold text-japan-dark">{trips.length}</p>
+          <p className="text-sm text-travel-gray">Reizen</p>
+          <p className="text-2xl font-bold text-travel-dark">{trips.length}</p>
         </div>
         <div className="card">
-          <p className="text-sm text-japan-gray">Budget</p>
-          <p className="text-2xl font-bold text-japan-dark">
-            ¥{budget.totalBudget.toLocaleString()}
+          <p className="text-sm text-travel-gray">Budget</p>
+          <p className="text-2xl font-bold text-travel-dark">
+            {budget.totalBudget.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })}
           </p>
         </div>
         <div className="card">
-          <p className="text-sm text-japan-gray">Uitgegeven</p>
-          <p className="text-2xl font-bold text-japan-red">
-            ¥{budget.totalSpent.toLocaleString()}
+          <p className="text-sm text-travel-gray">Uitgegeven</p>
+          <p className="text-2xl font-bold text-travel-primary">
+            {budget.totalSpent.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })}
           </p>
         </div>
         <div className="card">
-          <p className="text-sm text-japan-gray">Resterend</p>
+          <p className="text-sm text-travel-gray">Resterend</p>
           <p className="text-2xl font-bold text-green-600">
-            ¥{(budget.totalBudget - budget.totalSpent).toLocaleString()}
+            {(budget.totalBudget - budget.totalSpent).toLocaleString("nl-NL", { style: "currency", currency: "EUR" })}
           </p>
         </div>
       </div>
@@ -151,8 +151,10 @@ export default function DashboardPage() {
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
               {budget.categories.map((cat) => (
                 <div key={cat.category} className="text-sm">
-                  <span className="text-japan-gray capitalize">{cat.category}</span>
-                  <p className="font-medium">¥{cat.amount.toLocaleString()}</p>
+                  <span className="text-travel-gray capitalize">{cat.category}</span>
+                  <p className="font-medium">
+                    {cat.amount.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })}
+                  </p>
                 </div>
               ))}
             </div>
@@ -165,8 +167,8 @@ export default function DashboardPage() {
         <h2 className="text-xl font-semibold">Je Reizen</h2>
         {trips.length === 0 ? (
           <div className="card text-center py-12">
-            <p className="text-4xl mb-4">⛩️</p>
-            <p className="text-japan-gray">
+            <p className="text-4xl mb-4">✈️</p>
+            <p className="text-travel-gray">
               Nog geen reizen gepland. Maak je eerste reis aan!
             </p>
           </div>
@@ -180,21 +182,23 @@ export default function DashboardPage() {
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold group-hover:text-japan-red transition-colors">
+                    <h3 className="text-lg font-semibold group-hover:text-travel-primary transition-colors">
                       {trip.name}
                     </h3>
                     {trip.description && (
-                      <p className="text-sm text-japan-gray mt-1">
+                      <p className="text-sm text-travel-gray mt-1">
                         {trip.description}
                       </p>
                     )}
-                    <p className="text-sm text-japan-gray mt-2">
+                    <p className="text-sm text-travel-gray mt-2">
                       {formatDate(trip.startDate)} — {formatDate(trip.endDate)}
                     </p>
                   </div>
-                  <span className="badge-red">
-                    ¥{trip.totalBudget.toLocaleString()}
-                  </span>
+                  {trip.totalBudget > 0 && (
+                    <span className="badge-primary">
+                      {trip.totalBudget.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })}
+                    </span>
+                  )}
                 </div>
               </Link>
             ))}
@@ -209,18 +213,18 @@ export default function DashboardPage() {
             <h2 className="text-xl font-semibold mb-4">Nieuwe Reis</h2>
             <form onSubmit={createTrip} className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-japan-gray">Naam</label>
+                <label className="text-sm font-medium text-travel-gray">Naam</label>
                 <input
                   type="text"
                   className="input-field mt-1"
-                  placeholder="Bijv. Tokyo & Kyoto Avontuur"
+                  placeholder="Bijv. Roadtrip Italië"
                   value={newTrip.name}
                   onChange={(e) => setNewTrip({ ...newTrip, name: e.target.value })}
                   required
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-japan-gray">Beschrijving</label>
+                <label className="text-sm font-medium text-travel-gray">Beschrijving</label>
                 <textarea
                   className="input-field mt-1"
                   placeholder="Korte beschrijving van je reis"
@@ -231,7 +235,7 @@ export default function DashboardPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm font-medium text-japan-gray">Start</label>
+                  <label className="text-sm font-medium text-travel-gray">Start</label>
                   <input
                     type="date"
                     className="input-field mt-1"
@@ -241,7 +245,7 @@ export default function DashboardPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-japan-gray">Einde</label>
+                  <label className="text-sm font-medium text-travel-gray">Einde</label>
                   <input
                     type="date"
                     className="input-field mt-1"
@@ -252,11 +256,11 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-japan-gray">Budget (¥)</label>
+                <label className="text-sm font-medium text-travel-gray">Budget</label>
                 <input
                   type="number"
                   className="input-field mt-1"
-                  placeholder="300000"
+                  placeholder="2500"
                   value={newTrip.totalBudget || ""}
                   onChange={(e) => setNewTrip({ ...newTrip, totalBudget: Number(e.target.value) })}
                 />

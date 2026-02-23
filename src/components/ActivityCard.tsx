@@ -11,13 +11,13 @@ interface Activity {
 }
 
 const categoryConfig: Record<string, { icon: string; color: string }> = {
-  sightseeing: { icon: "⛩️", color: "bg-red-50 text-red-700" },
-  food: { icon: "🍜", color: "bg-orange-50 text-orange-700" },
-  transport: { icon: "🚅", color: "bg-blue-50 text-blue-700" },
+  sightseeing: { icon: "🏛️", color: "bg-cyan-50 text-cyan-700" },
+  food: { icon: "🍽️", color: "bg-orange-50 text-orange-700" },
+  transport: { icon: "🚌", color: "bg-blue-50 text-blue-700" },
   shopping: { icon: "🛍️", color: "bg-pink-50 text-pink-700" },
   accommodation: { icon: "🏨", color: "bg-purple-50 text-purple-700" },
   culture: { icon: "🎭", color: "bg-indigo-50 text-indigo-700" },
-  nature: { icon: "🌸", color: "bg-green-50 text-green-700" },
+  nature: { icon: "🌿", color: "bg-green-50 text-green-700" },
 };
 
 interface ActivityCardProps {
@@ -36,11 +36,11 @@ export default function ActivityCard({ activity, onDelete }: ActivityCardProps) 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between">
           <div>
-            <h4 className="font-medium text-japan-dark text-sm">
+            <h4 className="font-medium text-travel-dark text-sm">
               {activity.name}
             </h4>
             {activity.description && (
-              <p className="text-xs text-japan-gray mt-0.5">
+              <p className="text-xs text-travel-gray mt-0.5">
                 {activity.description}
               </p>
             )}
@@ -55,7 +55,7 @@ export default function ActivityCard({ activity, onDelete }: ActivityCardProps) 
             </button>
           )}
         </div>
-        <div className="flex items-center gap-3 mt-1.5 text-xs text-japan-gray">
+        <div className="flex items-center gap-3 mt-1.5 text-xs text-travel-gray">
           {activity.startTime && (
             <span>
               🕐 {activity.startTime}
@@ -64,8 +64,8 @@ export default function ActivityCard({ activity, onDelete }: ActivityCardProps) 
           )}
           {activity.location && <span>📍 {activity.location}</span>}
           {activity.cost > 0 && (
-            <span className="font-medium text-japan-red">
-              ¥{activity.cost.toLocaleString()}
+            <span className="font-medium text-travel-primary">
+              {activity.cost.toLocaleString("nl-NL", { style: "currency", currency: activity.currency || "EUR" })}
             </span>
           )}
         </div>

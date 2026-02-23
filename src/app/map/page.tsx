@@ -45,11 +45,15 @@ export default function MapPage() {
       category: a.category,
     }));
 
+  const defaultCenter = markers.length > 0
+    ? { lat: markers[0].lat, lng: markers[0].lng }
+    : { lat: 52.3676, lng: 4.9041 };
+
   return (
     <div className="h-full flex flex-col">
       <div className="p-6 pb-4">
-        <h1 className="text-3xl font-bold text-japan-dark">Kaart</h1>
-        <p className="text-japan-gray mt-1">
+        <h1 className="text-3xl font-bold text-travel-dark">Kaart</h1>
+        <p className="text-travel-gray mt-1">
           Al je activiteiten op de kaart — {markers.length} locaties
         </p>
       </div>
@@ -57,14 +61,14 @@ export default function MapPage() {
       <div className="flex-1 px-6 pb-6">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-japan-red border-t-transparent" />
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-travel-primary border-t-transparent" />
           </div>
         ) : (
           <div className="h-full rounded-xl overflow-hidden border border-gray-200">
             <MapView
               markers={markers}
-              center={{ lat: 35.6762, lng: 139.6503 }}
-              zoom={6}
+              center={defaultCenter}
+              zoom={markers.length > 0 ? 6 : 4}
             />
           </div>
         )}

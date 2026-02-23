@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         name: body.name,
         category: body.category,
         amount: body.amount,
-        currency: body.currency || "JPY",
+        currency: body.currency || "EUR",
         paid: body.paid || false,
         tripId: body.tripId,
       },

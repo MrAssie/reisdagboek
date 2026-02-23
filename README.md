@@ -1,10 +1,10 @@
-# Japan Reis Tracker ⛩️
+# ReisDagboek ✈️
 
-Plan en volg je perfecte reis naar Japan. Beheer je itinerary, budget en ontdek geweldige plekken.
+Een persoonlijk reisdagboek om al je reizen te plannen en bij te houden. Beheer je itinerary, budget en ontdek geweldige plekken — voor elke bestemming.
 
 ## Tech Stack
 
-- **Framework**: Next.js 14 (App Router) + TypeScript
+- **Framework**: Next.js 16 (App Router) + TypeScript
 - **Styling**: Tailwind CSS
 - **Database**: Prisma + PostgreSQL
 - **Maps**: Google Maps JS API + Places API
@@ -22,7 +22,7 @@ Plan en volg je perfecte reis naar Japan. Beheer je itinerary, budget en ontdek 
 1. **Clone en installeer dependencies**
 
 ```bash
-cd japan-reis-tracker
+cd reisdagboek
 npm install
 ```
 
@@ -35,7 +35,7 @@ cp .env.example .env
 Vul je `.env` bestand in:
 
 ```
-DATABASE_URL="postgresql://user:password@localhost:5432/japan_reis_tracker?schema=public"
+DATABASE_URL="postgresql://user:password@localhost:5432/reisdagboek?schema=public"
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="jouw-google-maps-api-key"
 ```
 
@@ -58,11 +58,11 @@ Open [http://localhost:3001](http://localhost:3001) in je browser.
 
 | Route | Beschrijving |
 |---|---|
-| `/` | Landing page |
-| `/dashboard` | Overzicht van reizen en budget |
-| `/itinerary` | Dag-voor-dag itinerary planner |
+| `/` | Overzicht van al je reizen (aankomende + eerdere) |
+| `/dashboard` | Budget overzicht en statistieken |
+| `/itinerary` | Dag-voor-dag itinerary planner per reis |
 | `/map` | Kaartweergave van alle activiteiten |
-| `/places` | Zoek en ontdek plekken in Japan |
+| `/places` | Zoek en ontdek plekken wereldwijd |
 
 ## API Routes
 

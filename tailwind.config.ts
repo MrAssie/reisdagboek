@@ -9,11 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        japan: {
-          red: "#DC2626",
-          "red-dark": "#B91C1C",
-          "red-light": "#FEE2E2",
-          white: "#FFFFFF",
+        travel: {
+          primary: "#0891B2",
+          "primary-dark": "#0E7490",
+          "primary-light": "#ECFEFF",
           dark: "#1F2937",
           "dark-light": "#374151",
           gray: "#6B7280",

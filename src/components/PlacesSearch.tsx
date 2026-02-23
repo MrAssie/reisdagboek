@@ -22,12 +22,12 @@ const placeTypes = [
   { value: "", label: "Alles" },
   { value: "restaurant", label: "Restaurants" },
   { value: "tourist_attraction", label: "Bezienswaardigheden" },
-  { value: "temple", label: "Tempels" },
-  { value: "shrine", label: "Heiligdommen" },
   { value: "park", label: "Parken" },
   { value: "museum", label: "Musea" },
   { value: "shopping_mall", label: "Winkels" },
   { value: "lodging", label: "Hotels" },
+  { value: "cafe", label: "Cafés" },
+  { value: "bar", label: "Bars" },
 ];
 
 export default function PlacesSearch({ onResults }: PlacesSearchProps) {
@@ -60,7 +60,7 @@ export default function PlacesSearch({ onResults }: PlacesSearchProps) {
         <input
           type="text"
           className="input-field pl-10"
-          placeholder="Zoek plekken in Japan..."
+          placeholder="Zoek plekken..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />

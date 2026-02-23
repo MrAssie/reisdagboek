@@ -5,8 +5,8 @@ const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 export async function GET(request: NextRequest) {
   const query = request.nextUrl.searchParams.get("query");
   const type = request.nextUrl.searchParams.get("type") || "";
-  const lat = request.nextUrl.searchParams.get("lat") || "35.6762";
-  const lng = request.nextUrl.searchParams.get("lng") || "139.6503";
+  const lat = request.nextUrl.searchParams.get("lat") || "52.3676";
+  const lng = request.nextUrl.searchParams.get("lng") || "4.9041";
 
   if (!query) {
     return NextResponse.json({ error: "Query is required" }, { status: 400 });
@@ -21,11 +21,11 @@ export async function GET(request: NextRequest) {
 
   try {
     const params = new URLSearchParams({
-      query: `${query} Japan`,
+      query,
       location: `${lat},${lng}`,
       radius: "50000",
       key: GOOGLE_MAPS_API_KEY,
-      language: "en",
+      language: "nl",
     });
 
     if (type) {

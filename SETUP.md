@@ -1,23 +1,24 @@
-# Japan Reis Tracker — App Idee
+# ReisDagboek — App Idee
 
 **Aangemaakt:** 2026-02-23
 **Door:** Marten Assen
 
 ## Concept
 
-Een persoonlijk Next.js webapplicatie om de Japan reis (eind 2026) bij te plannen en bijhouden. Combinatie van budgettracking, reisplanning en interactieve kaart.
+Een persoonlijk Next.js webapplicatie om al je reizen te plannen en bij te houden. Combinatie van budgettracking, reisplanning en interactieve kaart — voor elke bestemming ter wereld.
 
 ---
 
 ## Functionaliteiten
 
 ### 1. Budgetbeheer
-- Totaalbudget instellen voor de reis
+- Totaalbudget instellen per reis
 - Kosten per categorie bijhouden: vluchten, accommodatie, activiteiten, eten, vervoer
 - Realtime overzicht van resterende budget
 - Kosten koppelen aan specifieke bestemmingen/activiteiten
 
 ### 2. Reisplanning
+- Meerdere reizen aanmaken en beheren
 - Bestemmingen en activiteiten toevoegen
 - Reistijden/routes bijhouden
 - Datumplanning (dag-per-dag itinerary)
@@ -47,14 +48,12 @@ Een persoonlijk Next.js webapplicatie om de Japan reis (eind 2026) bij te planne
 
 | Component | Technologie |
 |-----------|-------------|
-| Frontend | Next.js 14+ (App Router) |
+| Frontend | Next.js 16 (App Router) |
 | Database | PostgreSQL |
 | ORM | Prisma |
 | Maps | Google Maps JavaScript API |
-| Places | Google Places API (New) |
+| Places | Google Places API |
 | Styling | Tailwind CSS |
-| Auth | NextAuth.js (optioneel, single-user OK) |
-| Storage | Local of Supabase Storage (voor foto's) |
 
 ---
 
@@ -78,36 +77,9 @@ BudgetItem: id, trip_id, category, description, amount, date, activity_id (optio
 
 ---
 
-## Google API's
-
-- **Maps JavaScript API** — kaart renderen, markers, routes
-- **Places API (New)** — zoeken, details ophalen (prijs, rating, foto's)
-- API key via Google Cloud Console
-
----
-
-## Project structuur (Next.js)
-
-```
-/app
-  /dashboard        — budgetoverzicht
-  /map              — interactieve kaart
-  /itinerary        — dag-per-dag planning
-  /places           — zoeken & toevoegen via Places API
-  /api              — server actions / API routes
-/components
-/lib
-  /db               — Prisma client
-  /google           — Maps + Places helpers
-/prisma
-  schema.prisma
-```
-
----
-
 ## MVP scope
 
-1. Reis aanmaken met budget
+1. Meerdere reizen aanmaken met budget
 2. Activiteiten toevoegen (handmatig + via Places search)
 3. Kaartweergave met markers
 4. Budget tracker (uitgegeven vs. beschikbaar)

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         endTime: body.endTime || null,
         category: body.category || "sightseeing",
         cost: body.cost || 0,
-        currency: body.currency || "JPY",
+        currency: body.currency || "EUR",
         photoUrl: body.photoUrl || null,
         rating: body.rating || null,
         dayId: body.dayId,

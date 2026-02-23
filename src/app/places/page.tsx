@@ -18,7 +18,7 @@ interface Place {
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
-  const [mapCenter, setMapCenter] = useState({ lat: 35.6762, lng: 139.6503 });
+  const [mapCenter, setMapCenter] = useState({ lat: 52.3676, lng: 4.9041 });
 
   function handlePlaceSelect(place: Place) {
     setSelectedPlace(place);
@@ -46,9 +46,9 @@ export default function PlacesPage() {
   return (
     <div className="h-full flex flex-col">
       <div className="p-6 pb-4">
-        <h1 className="text-3xl font-bold text-japan-dark">Plekken Ontdekken</h1>
-        <p className="text-japan-gray mt-1">
-          Zoek naar restaurants, tempels, winkels en meer in Japan
+        <h1 className="text-3xl font-bold text-travel-dark">Plekken Ontdekken</h1>
+        <p className="text-travel-gray mt-1">
+          Zoek naar restaurants, hotels, bezienswaardigheden en meer
         </p>
       </div>
 
@@ -68,12 +68,12 @@ export default function PlacesPage() {
                 onClick={() => handlePlaceSelect(place)}
                 className={`w-full text-left card p-4 hover:shadow-md transition-shadow ${
                   selectedPlace?.placeId === place.placeId
-                    ? "ring-2 ring-japan-red"
+                    ? "ring-2 ring-travel-primary"
                     : ""
                 }`}
               >
-                <h3 className="font-medium text-japan-dark">{place.name}</h3>
-                <p className="text-sm text-japan-gray mt-1">{place.address}</p>
+                <h3 className="font-medium text-travel-dark">{place.name}</h3>
+                <p className="text-sm text-travel-gray mt-1">{place.address}</p>
                 {place.rating && (
                   <div className="flex items-center gap-1 mt-2">
                     <span className="text-yellow-500">★</span>
@@ -90,7 +90,7 @@ export default function PlacesPage() {
           <MapView
             markers={markers}
             center={mapCenter}
-            zoom={selectedPlace ? 15 : 10}
+            zoom={selectedPlace ? 15 : 4}
           />
         </div>
       </div>

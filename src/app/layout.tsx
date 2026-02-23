@@ -3,8 +3,8 @@ import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "Japan Reis Tracker | 日本旅行",
-  description: "Plan and track your perfect Japan trip",
+  title: "ReisDagboek | Travel Journal",
+  description: "Plan en volg al je reizen. Beheer je itinerary, budget en ontdek geweldige plekken.",
 };
 
 export default function RootLayout({

@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import ActivityCard from "@/components/ActivityCard";
+import Link from "next/link";
 
 interface Activity {
   id: string;
@@ -38,7 +39,7 @@ export default function ItineraryPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-japan-red border-t-transparent" />
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-travel-primary border-t-transparent" />
         </div>
       }
     >
@@ -144,7 +145,7 @@ function ItineraryContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-japan-red border-t-transparent" />
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-travel-primary border-t-transparent" />
       </div>
     );
   }
@@ -152,9 +153,13 @@ function ItineraryContent() {
   if (!tripId) {
     return (
       <div className="p-8 text-center">
-        <p className="text-4xl mb-4">🗾</p>
-        <p className="text-japan-gray">
-          Selecteer een reis vanuit het dashboard om je itinerary te bekijken.
+        <p className="text-4xl mb-4">📅</p>
+        <p className="text-travel-gray">
+          Selecteer een reis vanuit de{" "}
+          <Link href="/" className="text-travel-primary hover:underline">
+            homepage
+          </Link>{" "}
+          om je itinerary te bekijken.
         </p>
       </div>
     );
@@ -164,11 +169,11 @@ function ItineraryContent() {
     <div className="p-8 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-japan-dark">
+          <h1 className="text-3xl font-bold text-travel-dark">
             {trip?.name ?? "Itinerary"}
           </h1>
           {trip && (
-            <p className="text-japan-gray mt-1">
+            <p className="text-travel-gray mt-1">
               {new Date(trip.startDate).toLocaleDateString("nl-NL")} —{" "}
               {new Date(trip.endDate).toLocaleDateString("nl-NL")}
             </p>
@@ -186,12 +191,12 @@ function ItineraryContent() {
           <div key={day.id} className="card space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-japan-red text-white flex items-center justify-center font-bold">
+                <div className="w-10 h-10 rounded-full bg-travel-primary text-white flex items-center justify-center font-bold">
                   {index + 1}
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold">{day.title}</h2>
-                  <p className="text-sm text-japan-gray">
+                  <p className="text-sm text-travel-gray">
                     {new Date(day.date).toLocaleDateString("nl-NL", {
                       weekday: "long",
                       day: "numeric",
@@ -202,14 +207,14 @@ function ItineraryContent() {
               </div>
               <button
                 onClick={() => setShowAddActivity(day.id)}
-                className="text-sm text-japan-red hover:text-japan-red-dark font-medium"
+                className="text-sm text-travel-primary hover:text-travel-primary-dark font-medium"
               >
                 + Activiteit
               </button>
             </div>
 
             {day.notes && (
-              <p className="text-sm text-japan-gray bg-gray-50 rounded-lg p-3">
+              <p className="text-sm text-travel-gray bg-gray-50 rounded-lg p-3">
                 {day.notes}
               </p>
             )}
@@ -282,7 +287,7 @@ function ItineraryContent() {
                   <input
                     type="number"
                     className="input-field"
-                    placeholder="Kosten (¥)"
+                    placeholder="Kosten"
                     value={newActivity.cost || ""}
                     onChange={(e) => setNewActivity({ ...newActivity, cost: Number(e.target.value) })}
                   />
@@ -307,7 +312,7 @@ function ItineraryContent() {
       {trip?.days.length === 0 && (
         <div className="card text-center py-12">
           <p className="text-4xl mb-4">📅</p>
-          <p className="text-japan-gray">
+          <p className="text-travel-gray">
             Nog geen dagen gepland. Voeg je eerste dag toe!
           </p>
         </div>
@@ -320,7 +325,7 @@ function ItineraryContent() {
             <h2 className="text-xl font-semibold mb-4">Dag Toevoegen</h2>
             <form onSubmit={addDay} className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-japan-gray">Datum</label>
+                <label className="text-sm font-medium text-travel-gray">Datum</label>
                 <input
                   type="date"
                   className="input-field mt-1"
@@ -330,18 +335,18 @@ function ItineraryContent() {
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-japan-gray">Titel</label>
+                <label className="text-sm font-medium text-travel-gray">Titel</label>
                 <input
                   type="text"
                   className="input-field mt-1"
-                  placeholder="Bijv. Tokyo Verkenning"
+                  placeholder="Bijv. Stadsverkenning"
                   value={newDay.title}
                   onChange={(e) => setNewDay({ ...newDay, title: e.target.value })}
                   required
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-japan-gray">Notities</label>
+                <label className="text-sm font-medium text-travel-gray">Notities</label>
                 <textarea
                   className="input-field mt-1"
                   placeholder="Optionele notities voor deze dag"
