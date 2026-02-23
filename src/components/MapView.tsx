@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import { Map as MapIcon } from "lucide-react";
 
 interface Marker {
   id: string;
@@ -19,15 +20,15 @@ interface MapViewProps {
 }
 
 const categoryColors: Record<string, string> = {
-  sightseeing: "#0891B2",
+  sightseeing: "#18181b",
   food: "#EA580C",
   transport: "#2563EB",
   shopping: "#DB2777",
   accommodation: "#7C3AED",
   culture: "#4F46E5",
   nature: "#16A34A",
-  selected: "#0891B2",
-  place: "#6B7280",
+  selected: "#18181b",
+  place: "#71717a",
 };
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -41,6 +42,7 @@ export default function MapView({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
+  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
   const [error, setError] = useState<string | null>(
     !apiKey
       ? "Google Maps API key niet geconfigureerd. Voeg NEXT_PUBLIC_GOOGLE_MAPS_API_KEY toe aan je .env bestand."
@@ -79,6 +81,7 @@ export default function MapView({
           ],
         });
 
+        infoWindowRef.current = new globalThis.google.maps.InfoWindow();
         mapInstanceRef.current = map;
       })
       .catch((err) => {
@@ -88,12 +91,10 @@ export default function MapView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update markers
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
 
-    // Clear existing markers
     markersRef.current.forEach((m) => (m.map = null));
     markersRef.current = [];
 
@@ -102,7 +103,7 @@ export default function MapView({
       pinElement.style.width = "28px";
       pinElement.style.height = "28px";
       pinElement.style.borderRadius = "50%";
-      pinElement.style.backgroundColor = categoryColors[marker.category] || "#0891B2";
+      pinElement.style.backgroundColor = categoryColors[marker.category] || "#18181b";
       pinElement.style.border = "3px solid white";
       pinElement.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)";
       pinElement.style.cursor = "pointer";
@@ -114,14 +115,21 @@ export default function MapView({
         content: pinElement,
       });
 
-      if (onMarkerClick) {
-        advancedMarker.addListener("click", () => onMarkerClick(marker));
-      }
+      advancedMarker.addListener("click", () => {
+        if (infoWindowRef.current) {
+          infoWindowRef.current.setContent(
+            `<div style="padding:4px 8px;font-family:Inter,system-ui,sans-serif;">` +
+            `<strong style="font-size:14px;">${marker.title}</strong>` +
+            `</div>`
+          );
+          infoWindowRef.current.open(map, advancedMarker);
+        }
+        if (onMarkerClick) onMarkerClick(marker);
+      });
 
       markersRef.current.push(advancedMarker);
     });
 
-    // Fit bounds if multiple markers
     if (markers.length > 1) {
       const bounds = new google.maps.LatLngBounds();
       markers.forEach((m) => bounds.extend({ lat: m.lat, lng: m.lng }));
@@ -132,7 +140,6 @@ export default function MapView({
     }
   }, [markers, onMarkerClick]);
 
-  // Update center
   useEffect(() => {
     if (mapInstanceRef.current && center) {
       mapInstanceRef.current.panTo(center);
@@ -141,10 +148,10 @@ export default function MapView({
 
   if (error) {
     return (
-      <div className="h-full flex items-center justify-center bg-gray-50">
+      <div className="h-full flex items-center justify-center bg-muted">
         <div className="text-center p-8 max-w-md">
-          <p className="text-4xl mb-4">🗺️</p>
-          <p className="text-travel-gray text-sm">{error}</p>
+          <MapIcon className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-muted-foreground text-sm">{error}</p>
         </div>
       </div>
     );

@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Plus, CalendarDays, Loader2 } from "lucide-react";
+import PlacesAutocomplete from "@/components/PlacesAutocomplete";
 
 interface Activity {
   id: string;
@@ -69,6 +70,10 @@ function ItineraryContent() {
     name: "",
     description: "",
     location: "",
+    address: "",
+    latitude: null as number | null,
+    longitude: null as number | null,
+    placeId: "",
     startTime: "",
     endTime: "",
     category: "sightseeing",
@@ -130,6 +135,10 @@ function ItineraryContent() {
           name: "",
           description: "",
           location: "",
+          address: "",
+          latitude: null,
+          longitude: null,
+          placeId: "",
           startTime: "",
           endTime: "",
           category: "sightseeing",
@@ -250,10 +259,18 @@ function ItineraryContent() {
                         onChange={(e) => setNewActivity({ ...newActivity, name: e.target.value })}
                         required
                       />
-                      <Input
-                        placeholder="Locatie"
+                      <PlacesAutocomplete
                         value={newActivity.location}
-                        onChange={(e) => setNewActivity({ ...newActivity, location: e.target.value })}
+                        onChange={(value) => setNewActivity({ ...newActivity, location: value })}
+                        onPlaceSelect={(place) => setNewActivity({
+                          ...newActivity,
+                          location: place.name,
+                          address: place.address,
+                          latitude: place.latitude,
+                          longitude: place.longitude,
+                          placeId: place.placeId,
+                        })}
+                        placeholder="Zoek locatie..."
                       />
                     </div>
                     <Input
