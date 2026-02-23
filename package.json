@@ -8,8 +8,7 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "prisma generate && next build",
-    "postbuild": "prisma migrate deploy",
-    "start": "next start -p ${PORT:-3001}",
+    "start": "prisma migrate deploy && next start -p ${PORT:-3001}",
     "lint": "eslint .",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
