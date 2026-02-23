@@ -1,3 +1,5 @@
+import { Progress } from "@/components/ui/progress";
+
 interface BudgetBarProps {
   spent: number;
   total: number;
@@ -10,32 +12,24 @@ export default function BudgetBar({ spent, total }: BudgetBarProps) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-sm">
-        <span className="text-travel-gray">
+        <span className="text-muted-foreground">
           {spent.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })} /{" "}
           {total.toLocaleString("nl-NL", { style: "currency", currency: "EUR" })}
         </span>
         <span
           className={`font-medium ${
-            isOverBudget ? "text-red-600" : percentage > 80 ? "text-amber-500" : "text-green-600"
+            isOverBudget ? "text-destructive" : percentage > 80 ? "text-amber-500" : "text-emerald-600"
           }`}
         >
           {percentage.toFixed(0)}%
         </span>
       </div>
-      <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-500 ${
-            isOverBudget
-              ? "bg-red-500"
-              : percentage > 80
-                ? "bg-amber-400"
-                : "bg-travel-primary"
-          }`}
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
+      <Progress
+        value={percentage}
+        className={`h-2 ${isOverBudget ? "[&>div]:bg-destructive" : percentage > 80 ? "[&>div]:bg-amber-400" : ""}`}
+      />
       {isOverBudget && (
-        <p className="text-xs text-red-500 font-medium">
+        <p className="text-xs text-destructive font-medium">
           {(spent - total).toLocaleString("nl-NL", { style: "currency", currency: "EUR" })} over budget!
         </p>
       )}

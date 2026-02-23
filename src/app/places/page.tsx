@@ -3,6 +3,9 @@
 import { useState } from "react";
 import PlacesSearch from "@/components/PlacesSearch";
 import MapView from "@/components/MapView";
+import { Card, CardContent } from "@/components/ui/card";
+import { Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Place {
   placeId: string;
@@ -46,47 +49,47 @@ export default function PlacesPage() {
   return (
     <div className="h-full flex flex-col">
       <div className="p-6 pb-4">
-        <h1 className="text-3xl font-bold text-travel-dark">Plekken Ontdekken</h1>
-        <p className="text-travel-gray mt-1">
+        <h1 className="text-3xl font-bold tracking-tight">Plekken Ontdekken</h1>
+        <p className="text-muted-foreground mt-1">
           Zoek naar restaurants, hotels, bezienswaardigheden en meer
         </p>
       </div>
 
       <div className="flex-1 flex gap-6 px-6 pb-6 min-h-0">
-        {/* Search Panel */}
         <div className="w-96 flex flex-col gap-4">
           <PlacesSearch
             onResults={setPlaces}
             onSelect={handlePlaceSelect}
           />
 
-          {/* Results */}
           <div className="flex-1 overflow-y-auto space-y-3">
             {places.map((place) => (
               <button
                 key={place.placeId}
                 onClick={() => handlePlaceSelect(place)}
-                className={`w-full text-left card p-4 hover:shadow-md transition-shadow ${
-                  selectedPlace?.placeId === place.placeId
-                    ? "ring-2 ring-travel-primary"
-                    : ""
-                }`}
+                className="w-full text-left"
               >
-                <h3 className="font-medium text-travel-dark">{place.name}</h3>
-                <p className="text-sm text-travel-gray mt-1">{place.address}</p>
-                {place.rating && (
-                  <div className="flex items-center gap-1 mt-2">
-                    <span className="text-yellow-500">★</span>
-                    <span className="text-sm font-medium">{place.rating}</span>
-                  </div>
-                )}
+                <Card className={cn(
+                  "hover:shadow-md transition-shadow",
+                  selectedPlace?.placeId === place.placeId && "ring-2 ring-primary"
+                )}>
+                  <CardContent className="p-4">
+                    <h3 className="font-medium">{place.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">{place.address}</p>
+                    {place.rating && (
+                      <div className="flex items-center gap-1 mt-2">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        <span className="text-sm font-medium">{place.rating}</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Map */}
-        <div className="flex-1 rounded-xl overflow-hidden border border-gray-200">
+        <div className="flex-1 rounded-xl overflow-hidden border">
           <MapView
             markers={markers}
             center={mapCenter}

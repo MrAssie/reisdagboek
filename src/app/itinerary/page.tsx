@@ -4,6 +4,15 @@ import { Suspense, useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import ActivityCard from "@/components/ActivityCard";
 import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { Plus, CalendarDays, Loader2 } from "lucide-react";
 
 interface Activity {
   id: string;
@@ -39,7 +48,7 @@ export default function ItineraryPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-full">
-          <div className="animate-spin rounded-full h-8 w-8 border-2 border-travel-primary border-t-transparent" />
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </div>
       }
     >
@@ -145,7 +154,7 @@ function ItineraryContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-travel-primary border-t-transparent" />
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
     );
   }
@@ -153,10 +162,10 @@ function ItineraryContent() {
   if (!tripId) {
     return (
       <div className="p-8 text-center">
-        <p className="text-4xl mb-4">📅</p>
-        <p className="text-travel-gray">
+        <CalendarDays className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+        <p className="text-muted-foreground">
           Selecteer een reis vanuit de{" "}
-          <Link href="/" className="text-travel-primary hover:underline">
+          <Link href="/" className="text-primary hover:underline">
             homepage
           </Link>{" "}
           om je itinerary te bekijken.
@@ -169,208 +178,190 @@ function ItineraryContent() {
     <div className="p-8 max-w-4xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-travel-dark">
+          <h1 className="text-3xl font-bold tracking-tight">
             {trip?.name ?? "Itinerary"}
           </h1>
           {trip && (
-            <p className="text-travel-gray mt-1">
+            <p className="text-muted-foreground mt-1">
               {new Date(trip.startDate).toLocaleDateString("nl-NL")} —{" "}
               {new Date(trip.endDate).toLocaleDateString("nl-NL")}
             </p>
           )}
         </div>
-        <button onClick={() => setShowAddDay(true)} className="btn-primary">
-          + Dag Toevoegen
-        </button>
+        <Button onClick={() => setShowAddDay(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Dag Toevoegen
+        </Button>
       </div>
 
-      {/* Days */}
       {trip?.days
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
         .map((day, index) => (
-          <div key={day.id} className="card space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-travel-primary text-white flex items-center justify-center font-bold">
-                  {index + 1}
+          <Card key={day.id}>
+            <CardContent className="pt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">{day.title}</h2>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(day.date).toLocaleDateString("nl-NL", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "long",
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-lg font-semibold">{day.title}</h2>
-                  <p className="text-sm text-travel-gray">
-                    {new Date(day.date).toLocaleDateString("nl-NL", {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "long",
-                    })}
-                  </p>
-                </div>
+                <Button variant="ghost" size="sm" onClick={() => setShowAddActivity(day.id)}>
+                  <Plus className="w-4 h-4 mr-1" />
+                  Activiteit
+                </Button>
               </div>
-              <button
-                onClick={() => setShowAddActivity(day.id)}
-                className="text-sm text-travel-primary hover:text-travel-primary-dark font-medium"
-              >
-                + Activiteit
-              </button>
-            </div>
 
-            {day.notes && (
-              <p className="text-sm text-travel-gray bg-gray-50 rounded-lg p-3">
-                {day.notes}
-              </p>
-            )}
+              {day.notes && (
+                <p className="text-sm text-muted-foreground bg-muted rounded-lg p-3">
+                  {day.notes}
+                </p>
+              )}
 
-            <div className="space-y-3">
-              {day.activities
-                .sort((a, b) => a.order - b.order)
-                .map((activity) => (
-                  <ActivityCard
-                    key={activity.id}
-                    activity={activity}
-                    onDelete={() => deleteActivity(activity.id)}
-                  />
-                ))}
-            </div>
+              <div className="space-y-2">
+                {day.activities
+                  .sort((a, b) => a.order - b.order)
+                  .map((activity) => (
+                    <ActivityCard
+                      key={activity.id}
+                      activity={activity}
+                      onDelete={() => deleteActivity(activity.id)}
+                    />
+                  ))}
+              </div>
 
-            {/* Add Activity Form */}
-            {showAddActivity === day.id && (
-              <form onSubmit={(e) => addActivity(e, day.id)} className="border-t pt-4 space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="Activiteit naam"
-                    value={newActivity.name}
-                    onChange={(e) => setNewActivity({ ...newActivity, name: e.target.value })}
-                    required
-                  />
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="Locatie"
-                    value={newActivity.location}
-                    onChange={(e) => setNewActivity({ ...newActivity, location: e.target.value })}
-                  />
-                </div>
-                <input
-                  type="text"
-                  className="input-field"
-                  placeholder="Beschrijving"
-                  value={newActivity.description}
-                  onChange={(e) => setNewActivity({ ...newActivity, description: e.target.value })}
-                />
-                <div className="grid grid-cols-4 gap-3">
-                  <input
-                    type="time"
-                    className="input-field"
-                    value={newActivity.startTime}
-                    onChange={(e) => setNewActivity({ ...newActivity, startTime: e.target.value })}
-                  />
-                  <input
-                    type="time"
-                    className="input-field"
-                    value={newActivity.endTime}
-                    onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value })}
-                  />
-                  <select
-                    className="input-field"
-                    value={newActivity.category}
-                    onChange={(e) => setNewActivity({ ...newActivity, category: e.target.value })}
-                  >
-                    <option value="sightseeing">Bezienswaardigheden</option>
-                    <option value="food">Eten & Drinken</option>
-                    <option value="transport">Transport</option>
-                    <option value="shopping">Winkelen</option>
-                    <option value="accommodation">Overnachting</option>
-                    <option value="culture">Cultuur</option>
-                    <option value="nature">Natuur</option>
-                  </select>
-                  <input
-                    type="number"
-                    className="input-field"
-                    placeholder="Kosten"
-                    value={newActivity.cost || ""}
-                    onChange={(e) => setNewActivity({ ...newActivity, cost: Number(e.target.value) })}
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button type="submit" className="btn-primary text-sm">
-                    Toevoegen
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddActivity(null)}
-                    className="btn-secondary text-sm"
-                  >
-                    Annuleren
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
+              {showAddActivity === day.id && (
+                <>
+                  <Separator />
+                  <form onSubmit={(e) => addActivity(e, day.id)} className="space-y-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <Input
+                        placeholder="Activiteit naam"
+                        value={newActivity.name}
+                        onChange={(e) => setNewActivity({ ...newActivity, name: e.target.value })}
+                        required
+                      />
+                      <Input
+                        placeholder="Locatie"
+                        value={newActivity.location}
+                        onChange={(e) => setNewActivity({ ...newActivity, location: e.target.value })}
+                      />
+                    </div>
+                    <Input
+                      placeholder="Beschrijving"
+                      value={newActivity.description}
+                      onChange={(e) => setNewActivity({ ...newActivity, description: e.target.value })}
+                    />
+                    <div className="grid grid-cols-4 gap-3">
+                      <Input
+                        type="time"
+                        value={newActivity.startTime}
+                        onChange={(e) => setNewActivity({ ...newActivity, startTime: e.target.value })}
+                      />
+                      <Input
+                        type="time"
+                        value={newActivity.endTime}
+                        onChange={(e) => setNewActivity({ ...newActivity, endTime: e.target.value })}
+                      />
+                      <Select
+                        value={newActivity.category}
+                        onValueChange={(value) => setNewActivity({ ...newActivity, category: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sightseeing">Bezienswaardigheden</SelectItem>
+                          <SelectItem value="food">Eten & Drinken</SelectItem>
+                          <SelectItem value="transport">Transport</SelectItem>
+                          <SelectItem value="shopping">Winkelen</SelectItem>
+                          <SelectItem value="accommodation">Overnachting</SelectItem>
+                          <SelectItem value="culture">Cultuur</SelectItem>
+                          <SelectItem value="nature">Natuur</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="number"
+                        placeholder="Kosten"
+                        value={newActivity.cost || ""}
+                        onChange={(e) => setNewActivity({ ...newActivity, cost: Number(e.target.value) })}
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button type="submit" size="sm">Toevoegen</Button>
+                      <Button type="button" variant="outline" size="sm" onClick={() => setShowAddActivity(null)}>
+                        Annuleren
+                      </Button>
+                    </div>
+                  </form>
+                </>
+              )}
+            </CardContent>
+          </Card>
         ))}
 
       {trip?.days.length === 0 && (
-        <div className="card text-center py-12">
-          <p className="text-4xl mb-4">📅</p>
-          <p className="text-travel-gray">
-            Nog geen dagen gepland. Voeg je eerste dag toe!
-          </p>
-        </div>
+        <Card className="text-center py-12">
+          <CardContent>
+            <CalendarDays className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">
+              Nog geen dagen gepland. Voeg je eerste dag toe!
+            </p>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Add Day Modal */}
-      {showAddDay && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-semibold mb-4">Dag Toevoegen</h2>
-            <form onSubmit={addDay} className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-travel-gray">Datum</label>
-                <input
-                  type="date"
-                  className="input-field mt-1"
-                  value={newDay.date}
-                  onChange={(e) => setNewDay({ ...newDay, date: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-travel-gray">Titel</label>
-                <input
-                  type="text"
-                  className="input-field mt-1"
-                  placeholder="Bijv. Stadsverkenning"
-                  value={newDay.title}
-                  onChange={(e) => setNewDay({ ...newDay, title: e.target.value })}
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-travel-gray">Notities</label>
-                <textarea
-                  className="input-field mt-1"
-                  placeholder="Optionele notities voor deze dag"
-                  value={newDay.notes}
-                  onChange={(e) => setNewDay({ ...newDay, notes: e.target.value })}
-                  rows={2}
-                />
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="submit" className="btn-primary flex-1">
-                  Toevoegen
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowAddDay(false)}
-                  className="btn-secondary flex-1"
-                >
-                  Annuleren
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <Dialog open={showAddDay} onOpenChange={setShowAddDay}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Dag Toevoegen</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={addDay} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Datum</Label>
+              <Input
+                type="date"
+                value={newDay.date}
+                onChange={(e) => setNewDay({ ...newDay, date: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Titel</Label>
+              <Input
+                placeholder="Bijv. Stadsverkenning"
+                value={newDay.title}
+                onChange={(e) => setNewDay({ ...newDay, title: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Notities</Label>
+              <Textarea
+                placeholder="Optionele notities voor deze dag"
+                value={newDay.notes}
+                onChange={(e) => setNewDay({ ...newDay, notes: e.target.value })}
+                rows={2}
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button type="submit" className="flex-1">Toevoegen</Button>
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setShowAddDay(false)}>
+                Annuleren
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

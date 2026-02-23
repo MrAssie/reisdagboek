@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, Loader2 } from "lucide-react";
 
 interface Place {
   placeId: string;
@@ -19,20 +23,20 @@ interface PlacesSearchProps {
 }
 
 const placeTypes = [
-  { value: "", label: "Alles" },
+  { value: "all", label: "Alles" },
   { value: "restaurant", label: "Restaurants" },
   { value: "tourist_attraction", label: "Bezienswaardigheden" },
   { value: "park", label: "Parken" },
   { value: "museum", label: "Musea" },
   { value: "shopping_mall", label: "Winkels" },
   { value: "lodging", label: "Hotels" },
-  { value: "cafe", label: "Cafés" },
+  { value: "cafe", label: "Cafes" },
   { value: "bar", label: "Bars" },
 ];
 
 export default function PlacesSearch({ onResults }: PlacesSearchProps) {
   const [query, setQuery] = useState("");
-  const [type, setType] = useState("");
+  const [type, setType] = useState("all");
   const [loading, setLoading] = useState(false);
 
   async function handleSearch(e: React.FormEvent) {
@@ -41,7 +45,7 @@ export default function PlacesSearch({ onResults }: PlacesSearchProps) {
 
     setLoading(true);
     try {
-      const params = new URLSearchParams({ query, type });
+      const params = new URLSearchParams({ query, type: type === "all" ? "" : type });
       const res = await fetch(`/api/places/search?${params}`);
       if (res.ok) {
         const data = await res.json();
@@ -57,42 +61,33 @@ export default function PlacesSearch({ onResults }: PlacesSearchProps) {
   return (
     <form onSubmit={handleSearch} className="space-y-3">
       <div className="relative">
-        <input
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
           type="text"
-          className="input-field pl-10"
+          className="pl-9"
           placeholder="Zoek plekken..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-          🔍
-        </span>
       </div>
 
       <div className="flex gap-2">
-        <select
-          className="input-field flex-1"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-        >
-          {placeTypes.map((pt) => (
-            <option key={pt.value} value={pt.value}>
-              {pt.label}
-            </option>
-          ))}
-        </select>
+        <Select value={type} onValueChange={setType}>
+          <SelectTrigger className="flex-1">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {placeTypes.map((pt) => (
+              <SelectItem key={pt.value} value={pt.value}>
+                {pt.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-        <button
-          type="submit"
-          disabled={loading || !query.trim()}
-          className="btn-primary whitespace-nowrap disabled:opacity-50"
-        >
-          {loading ? (
-            <span className="inline-block animate-spin">⟳</span>
-          ) : (
-            "Zoeken"
-          )}
-        </button>
+        <Button type="submit" disabled={loading || !query.trim()}>
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Zoeken"}
+        </Button>
       </div>
     </form>
   );

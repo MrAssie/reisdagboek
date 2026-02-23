@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import MapView from "@/components/MapView";
+import { Badge } from "@/components/ui/badge";
+import { Loader2 } from "lucide-react";
 
 interface Activity {
   id: string;
@@ -52,19 +54,22 @@ export default function MapPage() {
   return (
     <div className="h-full flex flex-col">
       <div className="p-6 pb-4">
-        <h1 className="text-3xl font-bold text-travel-dark">Kaart</h1>
-        <p className="text-travel-gray mt-1">
-          Al je activiteiten op de kaart — {markers.length} locaties
+        <h1 className="text-3xl font-bold tracking-tight">Kaart</h1>
+        <p className="text-muted-foreground mt-1">
+          Al je activiteiten op de kaart —{" "}
+          <Badge variant="secondary" className="font-normal">
+            {markers.length} locaties
+          </Badge>
         </p>
       </div>
 
       <div className="flex-1 px-6 pb-6">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-2 border-travel-primary border-t-transparent" />
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
-          <div className="h-full rounded-xl overflow-hidden border border-gray-200">
+          <div className="h-full rounded-xl overflow-hidden border">
             <MapView
               markers={markers}
               center={defaultCenter}
