@@ -3,16 +3,17 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const day = await prisma.day.create({
       data: {
         date: new Date(body.date),
         title: body.title,
         notes: body.notes || null,
-        tripId: params.id,
+        tripId: id,
       },
     });
     return NextResponse.json(day, { status: 201 });

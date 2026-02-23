@@ -30,6 +30,8 @@ const categoryColors: Record<string, string> = {
   place: "#6B7280",
 };
 
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
 export default function MapView({
   markers = [],
   center = { lat: 35.6762, lng: 139.6503 },
@@ -39,14 +41,14 @@ export default function MapView({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    !apiKey
+      ? "Google Maps API key niet geconfigureerd. Voeg NEXT_PUBLIC_GOOGLE_MAPS_API_KEY toe aan je .env bestand."
+      : null
+  );
 
   useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (!apiKey) {
-      setError("Google Maps API key niet geconfigureerd. Voeg NEXT_PUBLIC_GOOGLE_MAPS_API_KEY toe aan je .env bestand.");
-      return;
-    }
+    if (!apiKey) return;
 
     const loader = new Loader({
       apiKey,
@@ -83,6 +85,7 @@ export default function MapView({
         console.error("Failed to load Google Maps:", err);
         setError("Kon Google Maps niet laden. Controleer je API key.");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update markers
