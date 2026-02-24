@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
+import { getGoogleMapsLoader, apiKey } from "@/lib/google-maps";
 import { Map as MapIcon } from "lucide-react";
 
 interface Marker {
@@ -32,8 +32,6 @@ const categoryColors: Record<string, string> = {
   place: "#71717a",
 };
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
 export default function MapView({
   markers = [],
   center = { lat: 52.3676, lng: 4.9041 },
@@ -53,13 +51,8 @@ export default function MapView({
   );
 
   useEffect(() => {
-    if (!apiKey) return;
-
-    const loader = new Loader({
-      apiKey,
-      version: "weekly",
-      libraries: ["places", "marker"],
-    });
+    const loader = getGoogleMapsLoader();
+    if (!loader) return;
 
     loader
       .importLibrary("maps")

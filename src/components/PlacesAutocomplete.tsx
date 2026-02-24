@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
+import { getGoogleMapsLoader, apiKey } from "@/lib/google-maps";
 import { Input } from "@/components/ui/input";
 import { MapPin, Loader2, X } from "lucide-react";
 
@@ -21,8 +21,6 @@ interface PlacesAutocompleteProps {
   selectedAddress?: string;
 }
 
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
 export default function PlacesAutocomplete({
   value,
   onChange,
@@ -41,13 +39,8 @@ export default function PlacesAutocomplete({
   onPlaceSelectRef.current = onPlaceSelect;
 
   useEffect(() => {
-    if (!apiKey || autocompleteRef.current) return;
-
-    const loader = new Loader({
-      apiKey,
-      version: "weekly",
-      libraries: ["places"],
-    });
+    const loader = getGoogleMapsLoader();
+    if (!loader || autocompleteRef.current) return;
 
     loader.importLibrary("places").then(() => {
       if (!inputRef.current) return;
