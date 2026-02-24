@@ -846,7 +846,7 @@ function ItineraryContent() {
 
       {/* Add Activity Dialog (for kanban view) */}
       {showAddActivity && viewMode === "kanban" && (
-        <Dialog open={!!showAddActivity} onOpenChange={() => setShowAddActivity(null)}>
+        <Dialog modal={false} open={!!showAddActivity} onOpenChange={() => setShowAddActivity(null)}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Activiteit Toevoegen</DialogTitle>
@@ -1195,7 +1195,7 @@ function ItineraryContent() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!editingActivity} onOpenChange={() => setEditingActivity(null)}>
+      <Dialog modal={false} open={!!editingActivity} onOpenChange={() => setEditingActivity(null)}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Activiteit Bewerken</DialogTitle>
