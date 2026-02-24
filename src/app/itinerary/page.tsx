@@ -107,6 +107,7 @@ function ItineraryContent() {
   const [newBudgetItem, setNewBudgetItem] = useState({ name: "", category: "transport", amount: 0 });
   const [editingBudgetItem, setEditingBudgetItem] = useState<BudgetItem | null>(null);
   const [editingActivity, setEditingActivity] = useState<(Activity & { dayId: string }) | null>(null);
+  const [editingDay, setEditingDay] = useState<{ id: string; date: string; title: string; notes: string } | null>(null);
 
   const fetchTrip = useCallback(async () => {
     if (!tripId) {
@@ -339,6 +340,36 @@ function ItineraryContent() {
     }
   }
 
+  async function updateDay(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingDay) return;
+    try {
+      const res = await fetch(`/api/days/${editingDay.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editingDay),
+      });
+      if (res.ok) {
+        setEditingDay(null);
+        fetchTrip();
+      }
+    } catch {
+      console.error("Failed to update day");
+    }
+  }
+
+  async function deleteDay(id: string) {
+    try {
+      const res = await fetch(`/api/days/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setEditingDay(null);
+        fetchTrip();
+      }
+    } catch {
+      console.error("Failed to delete day");
+    }
+  }
+
   const sortedDays = trip?.days
     .slice()
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()) ?? [];
@@ -534,10 +565,24 @@ function ItineraryContent() {
                             </p>
                           </div>
                         </div>
-                        <Button variant="ghost" size="sm" onClick={() => setShowAddActivity(day.id)}>
-                          <Plus className="w-4 h-4 mr-1" />
-                          Activiteit
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingDay({
+                              id: day.id,
+                              date: new Date(day.date).toISOString().split("T")[0],
+                              title: day.title,
+                              notes: day.notes || "",
+                            })}
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => setShowAddActivity(day.id)}>
+                            <Plus className="w-4 h-4 mr-1" />
+                            Activiteit
+                          </Button>
+                        </div>
                       </div>
 
                       {day.notes && (
@@ -674,11 +719,24 @@ function ItineraryContent() {
                   <div key={day.id} className="w-80 shrink-0">
                     <div className="bg-muted/50 rounded-xl border">
                       <div className="p-4 border-b">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
-                            {index + 1}
-                          </span>
-                          <h3 className="font-semibold text-sm truncate">{day.title}</h3>
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shrink-0">
+                              {index + 1}
+                            </span>
+                            <h3 className="font-semibold text-sm truncate">{day.title}</h3>
+                          </div>
+                          <button
+                            onClick={() => setEditingDay({
+                              id: day.id,
+                              date: new Date(day.date).toISOString().split("T")[0],
+                              title: day.title,
+                              notes: day.notes || "",
+                            })}
+                            className="text-muted-foreground hover:text-foreground p-1 rounded shrink-0"
+                          >
+                            <Pencil className="w-3 h-3" />
+                          </button>
                         </div>
                         <p className="text-xs text-muted-foreground">
                           {new Date(day.date).toLocaleDateString("nl-NL", {
@@ -910,6 +968,57 @@ function ItineraryContent() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editingDay} onOpenChange={() => setEditingDay(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Dag Bewerken</DialogTitle>
+          </DialogHeader>
+          {editingDay && (
+            <form onSubmit={updateDay} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Datum</Label>
+                <Input
+                  type="date"
+                  value={editingDay.date}
+                  onChange={(e) => setEditingDay({ ...editingDay, date: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Titel</Label>
+                <Input
+                  value={editingDay.title}
+                  onChange={(e) => setEditingDay({ ...editingDay, title: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Notities</Label>
+                <Textarea
+                  value={editingDay.notes}
+                  onChange={(e) => setEditingDay({ ...editingDay, notes: e.target.value })}
+                  rows={2}
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button type="submit" className="flex-1">Opslaan</Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="flex-1"
+                  onClick={() => deleteDay(editingDay.id)}
+                >
+                  Verwijderen
+                </Button>
+                <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingDay(null)}>
+                  Annuleren
+                </Button>
+              </div>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
 
