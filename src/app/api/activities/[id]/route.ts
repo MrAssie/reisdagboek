@@ -26,6 +26,7 @@ export async function PUT(
         photoUrl: body.photoUrl,
         rating: body.rating,
         order: body.order,
+        dayId: body.dayId,
       },
     });
     return NextResponse.json(activity);

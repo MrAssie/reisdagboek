@@ -1062,6 +1062,24 @@ function ItineraryContent() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Dag</Label>
+                  <Select
+                    value={editingActivity.dayId}
+                    onValueChange={(value) => setEditingActivity({ ...editingActivity, dayId: value })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {sortedDays.map((day) => (
+                        <SelectItem key={day.id} value={day.id}>
+                          {day.title} — {new Date(day.date).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
                   <Label>Locatie</Label>
                   <PlacesAutocomplete
                     value={editingActivity.location || ""}
