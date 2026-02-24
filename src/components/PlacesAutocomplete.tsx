@@ -33,43 +33,83 @@ export default function PlacesAutocomplete({
   const onChangeRef = useRef(onChange);
   const onPlaceSelectRef = useRef(onPlaceSelect);
   const [ready, setReady] = useState(false);
+  const initAttemptedRef = useRef(false);
 
-  // Keep refs in sync without re-running useEffect
   onChangeRef.current = onChange;
   onPlaceSelectRef.current = onPlaceSelect;
+
+  const initAutocomplete = useCallback(() => {
+    if (autocompleteRef.current || !inputRef.current) return;
+
+    const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
+      fields: ["place_id", "name", "formatted_address", "geometry"],
+    });
+
+    autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      if (place.geometry?.location) {
+        const result: PlaceResult = {
+          placeId: place.place_id || "",
+          name: place.name || "",
+          address: place.formatted_address || "",
+          latitude: place.geometry.location.lat(),
+          longitude: place.geometry.location.lng(),
+        };
+        if (inputRef.current) {
+          inputRef.current.value = result.name;
+        }
+        onChangeRef.current(result.name);
+        onPlaceSelectRef.current(result);
+      }
+    });
+
+    autocompleteRef.current = autocomplete;
+    setReady(true);
+  }, []);
 
   useEffect(() => {
     const loader = getGoogleMapsLoader();
     if (!loader || autocompleteRef.current) return;
 
+    initAttemptedRef.current = true;
+
     loader.importLibrary("places").then(() => {
-      if (!inputRef.current) return;
-
-      const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
-        fields: ["place_id", "name", "formatted_address", "geometry"],
-      });
-
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (place.geometry?.location) {
-          const result: PlaceResult = {
-            placeId: place.place_id || "",
-            name: place.name || "",
-            address: place.formatted_address || "",
-            latitude: place.geometry.location.lat(),
-            longitude: place.geometry.location.lng(),
-          };
-          onChangeRef.current(result.name);
-          onPlaceSelectRef.current(result);
-        }
-      });
-
-      autocompleteRef.current = autocomplete;
-      setReady(true);
+      // Try immediately
+      if (inputRef.current) {
+        initAutocomplete();
+        return;
+      }
+      // Retry after a short delay (Dialog animation)
+      const timer = setTimeout(() => {
+        initAutocomplete();
+      }, 100);
+      return () => clearTimeout(timer);
     });
-  }, []);
+  }, [initAutocomplete]);
+
+  // Retry initialization when input becomes available (e.g. Dialog opened)
+  useEffect(() => {
+    if (ready || autocompleteRef.current) return;
+    if (!initAttemptedRef.current) return;
+
+    const timer = setTimeout(() => {
+      initAutocomplete();
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [ready, initAutocomplete]);
+
+  // Sync input value with prop when value changes externally (e.g. clear)
+  useEffect(() => {
+    if (inputRef.current && inputRef.current.value !== value) {
+      inputRef.current.value = value;
+    }
+  }, [value]);
 
   const handleClear = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      inputRef.current.focus();
+    }
     onChange("");
     onPlaceSelect({
       placeId: "",
@@ -78,9 +118,6 @@ export default function PlacesAutocomplete({
       latitude: 0,
       longitude: 0,
     });
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
   }, [onChange, onPlaceSelect]);
 
   if (!apiKey) {
@@ -120,7 +157,7 @@ export default function PlacesAutocomplete({
           type="text"
           placeholder={placeholder}
           defaultValue={value}
-          key={value === "" ? "empty" : "filled"}
+          onChange={(e) => onChangeRef.current(e.target.value)}
           className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pl-9 pr-8 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
       </div>
